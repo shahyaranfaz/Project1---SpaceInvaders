@@ -24,8 +24,8 @@ A Python-based recreation of the classic arcade game **Space Invaders** made in 
 ### Installation
 
 ```bash
-git clone https://github.com/sshayzz/Project-1---Space-Invaders.git
-cd Project-1---Space-Invaders  
+git clone https://github.com/sshayzz/Project1---SpaceInvaders.git
+cd Project1---SpaceInvaders
 pip install pygame
 ```
 
