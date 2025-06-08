@@ -1,6 +1,6 @@
 # Project - 1 -- Space-Invaders
 
-A Python-based recreation of the classic arcade game **Space Invaders** made in collaboration with [Shahyar Anfaz](https://www.linkedin.com/in/shahyaranfaz/).
+A Python-based recreation of the classic arcade game **Space Invaders** made in collaboration with [Averi Wylie](https://www.linkedin.com/in/averiwylie/).
 
 ---
 
@@ -24,7 +24,7 @@ A Python-based recreation of the classic arcade game **Space Invaders** made in 
 ### Installation
 
 ```bash
-git clone https://github.com/AveriWylie/Project-1---Space-Invaders.git
+git clone https://github.com/sshayzz/Project-1---Space-Invaders.git
 cd Project-1---Space-Invaders  
 pip install pygame
 ```
@@ -36,13 +36,13 @@ pip install pygame
 Project-1---Space-Invaders/  
 ├── assets/             # Game graphics and sounds  
 ├── application.py      # Main game loop  
-├── button.py           # UI button classes  
+├── interface.py        # UI classes  
 ├── character.py        # Player and enemy classes  
 ├── constants.py        # Game constants and configurations  
 ├── game_token.py       # Token management  
 ├── LICENSE             # Project license  
-└── README.md           # Project documentation  
-
+├── README.md           # Project documentation  
+└── index.html          # Github pages website
 ---
 
 # 🖼️ Screenshots
@@ -53,11 +53,10 @@ Coming soon!
 
 # 📄 License
 
-This project is licensed under the MIT License. See the [LICENSE file](https://github.com/AveriWylie/Project-1---Space-Invaders/blob/main/LICENSE) for details.
+This project is licensed under the MIT License. See the [LICENSE file](https://github.com/sshayzz/Project-1---Space-Invaders/blob/main/LICENSE) for details.
 
 ---
 
 ## 📬 Contact
 
-For questions or suggestions, please open an issue or contact Averi Wylie or Shahyar Anfaz
-
+For questions or suggestions, please open an issue or contact Shahyar Anfaz or Averi Wylie
