@@ -53,7 +53,7 @@ Coming soon!
 
 # 📄 License
 
-This project is licensed under the MIT License. See the [LICENSE file](https://github.com/sshayzz/Project-1---Space-Invaders/blob/main/LICENSE) for details.
+This project is licensed under the MIT License. See the [LICENSE file](https://github.com/sshayzz/Project1---SpaceInvaders/blob/7b28ca3717d9426aa35456db62dddda5b0061e96/LICENSE) for details.
 
 ---
 
