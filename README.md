@@ -1,4 +1,4 @@
-# Project - 1 -- Space-Invaders
+# Space Invaders!
 
 A Python-based recreation of the classic arcade game **Space Invaders** made in collaboration with [Averi Wylie](https://www.linkedin.com/in/averiwylie/).
 
