@@ -2,6 +2,7 @@ import math
 import pygame
 """A file containing all the constant values required in the project."""
 # Pygame constants
+BACKGROUND = pygame.image.load("assets/game_background.png")
 KEY_STROKES = {
     pygame.K_LEFT: "L",
     pygame.K_RIGHT: "R",
@@ -90,3 +91,4 @@ SHOOTING_OFFSETS = {
     "RD": (21, 21)
 }
 SHOOTING_COOLDOWN = 300
+
