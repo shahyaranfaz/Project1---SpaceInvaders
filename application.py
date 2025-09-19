@@ -7,7 +7,9 @@ from constants import *
 
 def handle_events(buttons: list[Button], player: UserPlayer = None,
                   scroll: ScrollArea=None) -> None:
-    """"""
+    """Update and draw each button in <buttons>, manage user inputs if
+    <player> is provided, and manage scrolling if <scroll> is provided.
+    """
     mouse_pos = pygame.mouse.get_pos()
     for button in buttons:
         button.change_colour(mouse_pos)
@@ -29,17 +31,35 @@ def handle_events(buttons: list[Button], player: UserPlayer = None,
             scroll.handle_event(event)
 
 
-def update_screen():
+def update_screen() -> None:
+    """Update the display and enforces a frame rate of 60 FPS."""
     pygame.display.update()
     clock.tick(60)
 
 
-def quit_actions():
+def quit_actions() -> None:
+    """Quit the Pygame application and exits the program."""
     pygame.quit()
     sys.exit()
 
 
-def main_menu():
+def display_hud(player: UserPlayer) -> None:
+    """Draw <player>'s HUD on the screen, including score, ammo count, and
+    active power-ups.
+    """
+    score_text = FONT_25.render(f"SCORE: {player.score:06}", True, (255, 255, 255))
+    screen.blit(score_text, score_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 15)))
+    ammo_text = FONT_85.render(f"{player.ammo:3}", True, AMMO_COLOURS.get(player.ammo, (255, 255, 255)))
+    screen.blit(ammo_text, ammo_text.get_rect(topright=(SCREEN_WIDTH - 10, 10)))
+    if player.power_up is not None:
+        power_up_text = FONT_40.render(str(player.power_up), True, (255, 255, 255))
+        screen.blit(power_up_text, power_up_text.get_rect(topleft=(10, 10)))
+
+
+def main_menu() -> None:
+    """Display the main menu screen with the game title and main menu buttons.
+    Loops until the user selects an action (play, quit, or view high scores).
+    """
     buttons = [play_button, quit_button, high_score_button]
     screen.fill("Black")
     rendered_text = FONT_LOGO.render("SPACE INVADERS", True, "White")
@@ -49,7 +69,10 @@ def main_menu():
         update_screen()
 
 
-def show_high_scores():
+def show_high_scores() -> None:
+    """Display the high score screen with scrollable scores. Loops until the
+    user chooses to return to the main menu.
+    """
     buttons = [return_button]
     rendered_text = pygame.font.Font("assets/fonts/logo_font.ttf", 100).render("SPACE INVADERS", True, "White")
     screen.blit(rendered_text, rendered_text.get_rect(center=(SCREEN_WIDTH // 2, 50)))
@@ -66,13 +89,16 @@ def show_high_scores():
         update_screen()
 
 
-def play():
+def play() -> None:
+    """Run the main game loop. Handles player shooting, enemy updates, token
+    collection, HUD updates, and checks for game-over conditions.
+    """
     buttons = [press_to_quit_button]
     player = UserPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     enemies = []
     tokens = []
     while True:
-        screen.blit(pygame.image.load("assets/game_background.png"), (0, 0))
+        screen.blit(BACKGROUND, (0, 0))
         display_hud(player)
         handle_events(buttons, player)
         if player.shooting:
@@ -99,17 +125,11 @@ def play():
             game_over(player, enemies + player.bullets + tokens)
 
 
-def display_hud(player: UserPlayer) -> None:
-    score_text = FONT_25.render(f"SCORE: {player.score:06}", True, (255, 255, 255))
-    screen.blit(score_text, score_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 15)))
-    ammo_text = FONT_85.render(f"{player.ammo:3}", True, AMMO_COLOURS.get(player.ammo, (255, 255, 255)))
-    screen.blit(ammo_text, ammo_text.get_rect(topright=(SCREEN_WIDTH - 10, 10)))
-    if player.power_up is not None:
-        power_up_text = FONT_40.render(str(player.power_up), True, (255, 255, 255))
-        screen.blit(power_up_text, ammo_text.get_rect(topleft=(10, 10)))
-
-
-def game_over(player, objects):
+def game_over(player, objects) -> None:
+    """Draw <player> and all objects in <objects>. Then, display the game over
+    screen with the player's score and outcome. Updates the high score file if
+    necessary and loops until the user returns to the main menu.
+    """
     new_high_score = record_score(str(player.score), str(player.kills))
     if player.score >= 999999:
         display_msg, colour = "You Won!", "Gold"
@@ -118,7 +138,7 @@ def game_over(player, objects):
     else:
         display_msg, colour = "You Lost!", "Red"
     buttons = [main_menu_button]
-    screen.blit(pygame.image.load("assets/game_background.png"), (0, 0))
+    screen.blit(BACKGROUND, (0, 0))
     for obj in objects:
         obj.draw(screen)
     player.draw(screen)
@@ -130,6 +150,9 @@ def game_over(player, objects):
 
 
 def record_score(score: str, kills: str) -> bool:
+    """Return true if <score> is a new high score and record <score> and
+    <kills> in the high score file.
+    """
     import datetime
     time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split(" ")
     text = score + " " * (9 - len(score)) + kills + " " * (6 - len(kills)) + f"   {time[0]}   {time[1]}"
@@ -201,4 +224,3 @@ if __name__ == "__main__":
         main_menu
     )
     main_menu()
-
