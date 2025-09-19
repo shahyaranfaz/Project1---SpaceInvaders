@@ -1,12 +1,13 @@
 from __future__ import annotations
 import sys
+import datetime
 from character import UserPlayer
 from interface import Button, ScrollArea
 from constants import *
 
 
 def handle_events(buttons: list[Button], player: UserPlayer = None,
-                  scroll: ScrollArea=None) -> None:
+                  scroll: ScrollArea = None) -> None:
     """Update and draw each button in <buttons>, manage user inputs if
     <player> is provided, and manage scrolling if <scroll> is provided.
     """
@@ -47,12 +48,17 @@ def display_hud(player: UserPlayer) -> None:
     """Draw <player>'s HUD on the screen, including score, ammo count, and
     active power-ups.
     """
-    score_text = FONT_25.render(f"SCORE: {player.score:06}", True, (255, 255, 255))
-    screen.blit(score_text, score_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 15)))
-    ammo_text = FONT_85.render(f"{player.ammo:3}", True, AMMO_COLOURS.get(player.ammo, (255, 255, 255)))
-    screen.blit(ammo_text, ammo_text.get_rect(topright=(SCREEN_WIDTH - 10, 10)))
+    score_text = FONT_25.render(f"SCORE: {player.score:06}", True,
+                                (255, 255, 255))
+    screen.blit(score_text, score_text.get_rect(center=(SCREEN_WIDTH // 2,
+                                                        SCREEN_HEIGHT - 15)))
+    ammo_text = FONT_85.render(f"{player.ammo:3}", True, AMMO_COLOURS.get(
+        player.ammo, (255, 255, 255)))
+    screen.blit(ammo_text, ammo_text.get_rect(topright=(SCREEN_WIDTH - 10,
+                                                        10)))
     if player.power_up is not None:
-        power_up_text = FONT_40.render(str(player.power_up), True, (255, 255, 255))
+        power_up_text = FONT_40.render(str(player.power_up), True,
+                                       (255, 255, 255))
         screen.blit(power_up_text, power_up_text.get_rect(topleft=(10, 10)))
 
 
@@ -63,7 +69,8 @@ def main_menu() -> None:
     buttons = [play_button, quit_button, high_score_button]
     screen.fill("Black")
     rendered_text = FONT_LOGO.render("SPACE INVADERS", True, "White")
-    screen.blit(rendered_text, rendered_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)))
+    screen.blit(rendered_text, rendered_text.get_rect(center=(
+        SCREEN_WIDTH // 2,SCREEN_HEIGHT // 2)))
     while True:
         handle_events(buttons)
         update_screen()
@@ -74,14 +81,19 @@ def show_high_scores() -> None:
     user chooses to return to the main menu.
     """
     buttons = [return_button]
-    rendered_text = pygame.font.Font("assets/fonts/logo_font.ttf", 100).render("SPACE INVADERS", True, "White")
-    screen.blit(rendered_text, rendered_text.get_rect(center=(SCREEN_WIDTH // 2, 50)))
+    rendered_text = pygame.font.Font("assets/fonts/logo_font.ttf", 100).render(
+        "SPACE INVADERS", True, "White")
+    screen.blit(rendered_text, rendered_text.get_rect(center=(
+        SCREEN_WIDTH // 2, 50)))
     with open("assets/scores.txt") as scores:
         lines = scores.readlines()
-    high_scores = ScrollArea(0,100, SCREEN_WIDTH, SCREEN_HEIGHT - 100, len(lines) * 50)
+    high_scores = ScrollArea(0, 100, SCREEN_WIDTH, SCREEN_HEIGHT - 100,
+                             len(lines) * 50)
     for i, line in enumerate(lines):
-        text_surface = FONT_50.render(line.replace('\n', ''), True, "White")
-        text_rect = text_surface.get_rect(center=(high_scores.rect.width // 2, i * 50 + 25))
+        text_surface = FONT_50.render(line.replace('\n', ''), True,
+                                      "White")
+        text_rect = text_surface.get_rect(center=(high_scores.rect.width // 2,
+                                                  i * 50 + 25))
         high_scores.surface.blit(text_surface, text_rect)
     while True:
         high_scores.draw(screen)
@@ -125,7 +137,7 @@ def play() -> None:
             game_over(player, enemies + player.bullets + tokens)
 
 
-def game_over(player, objects) -> None:
+def game_over(player: UserPlayer, objects: list) -> None:
     """Draw <player> and all objects in <objects>. Then, display the game over
     screen with the player's score and outcome. Updates the high score file if
     necessary and loops until the user returns to the main menu.
@@ -144,7 +156,8 @@ def game_over(player, objects) -> None:
     player.draw(screen)
     while True:
         rendered_text = FONT_100.render(display_msg, True, colour)
-        screen.blit(rendered_text, rendered_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)))
+        screen.blit(rendered_text, rendered_text.get_rect(center=(
+            SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)))
         handle_events(buttons)
         update_screen()
 
@@ -153,9 +166,9 @@ def record_score(score: str, kills: str) -> bool:
     """Return true if <score> is a new high score and record <score> and
     <kills> in the high score file.
     """
-    import datetime
     time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split(" ")
-    text = score + " " * (9 - len(score)) + kills + " " * (6 - len(kills)) + f"   {time[0]}   {time[1]}"
+    text = (score + " " * (9 - len(score)) + kills + " " * (6 - len(kills))
+            + f"   {time[0]}   {time[1]}")
     with open("assets/scores.txt") as scores:
         entries = scores.readlines()
     if entries:
@@ -169,6 +182,7 @@ def record_score(score: str, kills: str) -> bool:
     if text == entries[0].strip():
         return True
     return False
+
 
 if __name__ == "__main__":
     pygame.init()

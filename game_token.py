@@ -1,10 +1,11 @@
 from __future__ import annotations
-from constants import *
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
+from constants import *
 
 if TYPE_CHECKING:
     from character import UserPlayer, Enemy
+
 
 class Token(ABC):
     """Abstract base class for Tokens which influence game mechanics and spawn
@@ -20,6 +21,7 @@ class Token(ABC):
     y: float
     image: pygame.Surface
     rect: pygame.Rect
+
     def __init__(self, location: tuple[float, float], image: str) -> None:
         """Initialize a new Token with a visual of <image< at <location>.
 
@@ -79,6 +81,7 @@ class PowerUpToken(Token, ABC):
         - start_time (float): The time the power-up was started.
     """
     start_time: float
+
     def __init__(self, location: tuple[float, float]) -> None:
         """Initialize a new PowerUpToken at <location>.
 

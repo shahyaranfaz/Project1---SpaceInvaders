@@ -1,5 +1,6 @@
-import pygame
 from typing import Callable
+import pygame
+
 
 class Button:
     """An interactable button which triggers in-game events when clicked
@@ -13,7 +14,8 @@ class Button:
         - text_input (str): The label text of the button.
         - text (pygame.Surface): Rendered text surface.
         - image (pygame.Surface): Button background surface.
-        - rect (pygame.Rect): Rect for button positioning and collision detection.
+        - rect (pygame.Rect): Rect for button positioning and collision
+        detection.
         - text_rect (pygame.Rect): Rect for positioning text over button.
         - action (Callable): Function called when the button is clicked.
     """
@@ -28,6 +30,7 @@ class Button:
     rect: pygame.rect
     text_rect: pygame.rect
     action: Callable
+
     def __init__(self, pos: tuple[float, float], text_input: str,
                  font: pygame.font.Font, base_colour: str, hover_colour: str,
                  action: Callable) -> None:
@@ -46,12 +49,13 @@ class Button:
             text_rect = self.text.get_rect()
         else:
             text_rect = self.text.get_bounding_rect()
-        self.image = pygame.Surface((text_rect.width, text_rect.height), pygame.SRCALPHA)
+        self.image = pygame.Surface((text_rect.width, text_rect.height),
+                                    pygame.SRCALPHA)
         self.rect = self.image.get_rect(center=(self.x, self.y))
         self.text_rect = self.text.get_rect(center=(self.x, self.y))
         self.action = action
 
-    def draw(self, screen) -> None:
+    def draw(self, screen: pygame.Surface) -> None:
         """Draws <self> on <screen>."""
         if self.image:
             screen.blit(self.image, self.rect)
@@ -66,9 +70,11 @@ class Button:
         <self>.rect.
         """
         if self.check_for_input(position):
-            self.text = self.font.render(self.text_input, True, self.hover_colour, None)
+            self.text = self.font.render(self.text_input, True,
+                                         self.hover_colour, None)
         else:
-            self.text = self.font.render(self.text_input, True, self.base_colour, None)
+            self.text = self.font.render(self.text_input, True,
+                                         self.base_colour, None)
 
 
 class ScrollArea:
@@ -82,9 +88,11 @@ class ScrollArea:
         - bg_colour (tuple[int, int, int]): Background colour.
         - surface (pygame.Surface): Surface to render content onto.
         - scrollbar_colour (tuple[int, int, int]): Default scrollbar colour.
-        - scrollbar_hover_colour (tuple[int, int, int]): Scrollbar colour when dragged.
+        - scrollbar_hover_colour (tuple[int, int, int]): Scrollbar colour
+        when dragged.
         - dragging (bool): True if the scrollbar is currently being dragged.
-        - drag_offset (int): Distance from mouse to top of scrollbar when dragging.
+        - drag_offset (int): Distance from mouse to top of scrollbar when
+        dragging.
     """
     rect: pygame.Rect
     content_height: int
@@ -96,7 +104,9 @@ class ScrollArea:
     scrollbar_hover_colour: tuple[int, int, int]
     dragging: bool
     drag_offset: int
-    def __init__(self, x, y, width, height, content_height) -> None:
+
+    def __init__(self, x: int, y: int, width: int, height: int,
+                 content_height: int) -> None:
         """Initialize a ScrollArea at <x>, <y> with a viewport of <width> by
         <height>. The ScrollArea has a total height of <content_height>.
         """
@@ -122,7 +132,7 @@ class ScrollArea:
             max_scroll = self.content_height - self.rect.height
             self.scroll_y = min(max_scroll, self.scroll_y + self.scroll_speed)
 
-    def handle_event(self, event):
+    def handle_event(self, event: pygame.event) -> None:
         """Handle mouse <event> to scroll content or drag the scrollbar."""
         if self.content_height <= self.rect.height:
             return
@@ -142,18 +152,25 @@ class ScrollArea:
             rel_y = event.pos[1] - self.drag_offset - self.rect.y
             rel_y = max(0, min(rel_y, self.rect.height - scrollbar.height))
             scroll_ratio = rel_y / (self.rect.height - scrollbar.height)
-            self.scroll_y = int(scroll_ratio * (self.content_height - self.rect.height))
+            height_diff = self.content_height - self.rect.height
+            self.scroll_y = int(scroll_ratio * height_diff)
 
     def _scrollbar_rect(self) -> pygame.Rect:
         """Return the current scrollbar rect based on scroll position."""
         if self.content_height <= self.rect.height:
             return pygame.Rect(0, 0, 0, 0)
+
         ratio = self.rect.height / self.content_height
         scrollbar_height = int(self.rect.height * ratio)
-        scrollbar_y = self.rect.y + int(self.scroll_y * (self.rect.height - scrollbar_height) / (self.content_height - self.rect.height))
-        return pygame.Rect(self.rect.right - 8, scrollbar_y, 6, scrollbar_height)
 
-    def draw(self, screen) -> None:
+        scrollbar_y = self.rect.y + int(
+            self.scroll_y * (self.rect.height - scrollbar_height)
+            / (self.content_height - self.rect.height)
+        )
+        return pygame.Rect(self.rect.right - 8, scrollbar_y, 6,
+                           scrollbar_height)
+
+    def draw(self, screen: pygame.Surface) -> None:
         """Draw <self> on <screen>."""
         view = pygame.Surface((self.rect.width, self.rect.height))
         view.blit(self.surface, (0, -self.scroll_y))
@@ -162,7 +179,8 @@ class ScrollArea:
 
         if self.content_height > self.rect.height:
             scrollbar_rect = self._scrollbar_rect()
-            colour = self.scrollbar_hover_colour if self.dragging else self.scrollbar_colour
+            colour = self.scrollbar_hover_colour if self.dragging else (
+                self.scrollbar_colour)
             pygame.draw.rect(screen, colour, scrollbar_rect, border_radius=3)
 
     def get_surface(self) -> pygame.Surface:

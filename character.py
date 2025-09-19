@@ -1,10 +1,12 @@
 from __future__ import annotations
 from random import randint, choice
-from game_token import (ScoreToken, AmmoToken, PowerUpToken, PUPiercingAmmo,
-                        PUDoubleScore, PUDoubleMovementSpeed,
+from abc import ABC, abstractmethod
+from typing import Optional
+from game_token import (Token, ScoreToken, AmmoToken, PowerUpToken,
+                        PUPiercingAmmo, PUDoubleScore, PUDoubleMovementSpeed,
                         PUSDoubleShootingSpeed)
 from constants import *
-from abc import ABC, abstractmethod
+
 
 class Character(ABC):
     """Abstract base class for user and enemy characters.
@@ -41,7 +43,9 @@ class Character(ABC):
         raise NotImplementedError
 
     def move(self, distance: tuple[int, int], speed: int) -> str:
-        """Move <self> by <distance> scaled by <speed> and return boundary hit."""
+        """Return boundary hit by moving <self> by <distance> scaled by
+        <speed>.
+        """
         self.x += distance[0] * speed
         self.y += distance[1] * speed
 
@@ -63,7 +67,7 @@ class Character(ABC):
         self.rect.y = int(self.y)
         return hitting_boundary
 
-    def place(self, screen) -> None:
+    def place(self, screen: pygame.Surface) -> None:
         """Update <self>'s location and draw on <screen>."""
         self.update()
         self.draw(screen)
@@ -96,6 +100,7 @@ class UserPlayer(Character):
     last_shot_time: float
     last_score_time: float
     power_up: Optional[PowerUpToken]
+
     def __init__(self, x: float, y: float) -> None:
         """Initialize a player at <x>, <y>."""
         super().__init__(x, y, "assets/character_icons/spaceship_up.png")
@@ -118,7 +123,8 @@ class UserPlayer(Character):
             self.direction = USER_INPUTS[input_][0]
             self.image = USER_INPUTS[input_][1]
             if str(self.power_up) == "DoubleMovementSpeed":
-                self.move(MOVEMENT_COEFFICIENTS[self.direction], PLAYER_SPEED * 2)
+                self.move(MOVEMENT_COEFFICIENTS[self.direction],
+                          PLAYER_SPEED * 2)
             else:
                 self.move(MOVEMENT_COEFFICIENTS[self.direction], PLAYER_SPEED)
 
@@ -127,7 +133,9 @@ class UserPlayer(Character):
         if self.ammo == 0:
             return None
         time_since_last = pygame.time.get_ticks() - self.last_shot_time
-        if time_since_last >= SHOOTING_COOLDOWN or str(self.power_up) == "DoubleShootingSpeed" and time_since_last >= SHOOTING_COOLDOWN // 2:
+        if (time_since_last >= SHOOTING_COOLDOWN
+                or str(self.power_up) == "DoubleShootingSpeed"
+                and time_since_last >= SHOOTING_COOLDOWN // 2):
             if len(self.direction) == 1:
                 x = self.rect.center[0]
                 y = self.rect.center[1]
@@ -141,28 +149,29 @@ class UserPlayer(Character):
     def update_bullets(self) -> None:
         """Remove bullets that leave the screen."""
         self.bullets = [bullet for bullet in self.bullets
-                        if 0 <= bullet.x <= SCREEN_WIDTH and
-                        0 <= bullet.y <= SCREEN_HEIGHT]
+                        if 0 <= bullet.x <= SCREEN_WIDTH
+                        and 0 <= bullet.y <= SCREEN_HEIGHT]
 
     def away_from_player(self) -> tuple[int, int]:
         """Return a random location at least 100px away from <self>."""
-        def get_coord(pos, max_value):
+        def get_coord(pos: int, max_value: int) -> int:
             if pos < 50:
                 return randint(pos, max_value)
             elif pos > max_value - 50:
                 return randint(50, pos)
             else:
-                return randint(50, pos) if randint(0, 1) else randint(pos, max_value)
+                return randint(50, pos) if randint(0, 1) \
+                    else randint(pos, max_value)
 
         while True:
             new_x = get_coord(self.rect.x, SCREEN_WIDTH - 50)
             new_y = get_coord(self.rect.y, SCREEN_HEIGHT - 50)
 
-            if abs(new_x - self.rect.x) >= 100 or abs(new_y - self.rect.y) >= 100:
+            if (abs(new_x - self.rect.x) >= 100
+                    or abs(new_y - self.rect.y) >= 100):
                 return new_x, new_y
 
-
-    def check_for_kills(self, enemies) -> None:
+    def check_for_kills(self, enemies: list[Enemy]) -> None:
         """Check bullet collisions with enemies in <enemies> and update
         <self>'s stats.
         """
@@ -189,7 +198,7 @@ class UserPlayer(Character):
             self.add_score(1)
             self.last_score_time = pygame.time.get_ticks()
 
-    def update_tokens(self, tokens) -> None:
+    def update_tokens(self, tokens: list[Token]) -> None:
         """Possibly spawn tokens and handle power-up expiration."""
         location = self.away_from_player()
         if randint(1, 1000) == 1:
@@ -210,34 +219,36 @@ class UserPlayer(Character):
         if self.power_up is not None and self.power_up.check_for_completion():
             self.set_power_up(None)
 
-    def set_power_up(self, power_up) -> None:
+    def set_power_up(self, power_up: PowerUpToken) -> None:
         """Assign a new power-up to <self>."""
         self.power_up = power_up
 
-    def set_user_input(self, event_key, event_value) -> None:
+    def set_user_input(self, event_key: int, event_value: int) -> None:
         """Update stored user input for given key event."""
         self.user_input[KEY_STROKES[event_key]] = event_value
 
-    def add_ammo(self, added_ammo) -> None:
+    def add_ammo(self, added_ammo: int) -> None:
         """Add <added_ammo> to self's ammo attribute, capping it at 999."""
         self.ammo = min(self.ammo + added_ammo, 999)
 
-    def add_score(self, added_score) -> None:
-        """Add <added_score> to <self>'s score, doubling if DoubleScore is active."""
+    def add_score(self, added_score: int) -> None:
+        """Add <added_score> to <self>'s score, doubling if DoubleScore is
+        active.
+        """
         if str(self.power_up) == "DoubleScore":
             self.score += 2 * added_score
         else:
             self.score += added_score
 
-    def add_kills(self, added_kills) -> None:
+    def add_kills(self, added_kills: int) -> None:
         """Increase <self>'s kills by <added_kills>."""
         self.kills += added_kills
 
-    def set_shooting(self, is_shooting) -> None:
+    def set_shooting(self, is_shooting: bool) -> None:
         """Set <self>'s shooting state to <is_shooting>."""
         self.shooting = is_shooting
 
-# Enemy Class
+
 class Enemy(Character):
     """An enemy character.
 
@@ -248,9 +259,11 @@ class Enemy(Character):
     """
     direction: str
     directional_timing: int
-    def __init__(self, location) -> None:
+
+    def __init__(self, location: tuple[float, float]) -> None:
         """Initialize enemy at <location>."""
-        super().__init__(location[0], location[1], "assets/character_icons/alien.png")
+        super().__init__(location[0], location[1],
+                         "assets/character_icons/alien.png")
         self.direction = DIRECTIONS[randint(0, 7)]
         self.directional_timing = randint(60, 300)
 
@@ -264,7 +277,7 @@ class Enemy(Character):
         if boundary != "":
             self.direction = choice(OPPOSITE_DIRECTIONS[boundary])
 
-    def check_for_death(self, player) -> bool:
+    def check_for_death(self, player: UserPlayer) -> bool:
         """Return true if <player>'s area collides with <self>'s area."""
         return self.rect.collidepoint(player.rect.center)
 
@@ -283,6 +296,7 @@ class Bullet:
     y: float
     rect: pygame.Rect
     direction: str
+
     def __init__(self, x: float, y: float, direction: str) -> None:
         """Initialize a Bullet at <x>, <y> moving in <direction>."""
         self.x = x
@@ -314,4 +328,3 @@ class Bullet:
                 enemies.remove(enemy)
                 kills += 1
         return kills
-
