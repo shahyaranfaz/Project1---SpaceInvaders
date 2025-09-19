@@ -1,7 +1,13 @@
 import math
 import pygame
-
-# Screen size constants
+"""A file containing all the constant values required in the project."""
+# Pygame constants
+KEY_STROKES = {
+    pygame.K_LEFT: "L",
+    pygame.K_RIGHT: "R",
+    pygame.K_UP: "U",
+    pygame.K_DOWN: "D"
+}
 pygame.init()
 SCREEN_WIDTH = pygame.display.Info().current_w
 SCREEN_HEIGHT = pygame.display.Info().current_h
@@ -13,13 +19,9 @@ FONT_85 = pygame.font.Font("assets/fonts/text_font.ttf", 85)
 FONT_100 = pygame.font.Font("assets/fonts/text_font.ttf", 100)
 FONT_LOGO = pygame.font.Font("assets/fonts/logo_font.ttf", 100)
 
-# Player movement constants
-PLAYER_SPEED = 6
+# Player constants
 SCORE_PER_KILL = 3
 AMMO_PER_KILL = 3
-ENEMY_SPEED = 3
-BULLET_SPEED = 15
-DIRECTIONS = ["L", "R", "U", "D", "LU", "RU", "LD", "RD"]
 USER_INPUTS = {
     # L  R  U  D
     (1, 1, 1, 1): (None, None),
@@ -39,23 +41,6 @@ USER_INPUTS = {
     (0, 0, 0, 1): ("D", pygame.image.load("assets/character_icons/spaceship_down.png")),
     (0, 0, 0, 0): (None, None)
 }
-SHOOTING_OFFSETS = {
-    "RU": (21, 24),
-    "LU": (24, 24),
-    "LD": (24, 21),
-    "RD": (21, 21)
-}
-SHOOTING_COOLDOWN = 300
-MOVEMENT_COEFFICIENTS = {
-    "L": (-1, 0),
-    "R": (1, 0),
-    "U": (0, -1),
-    "D": (0, 1),
-    "LU": (-1 / math.sqrt(2), -1 / math.sqrt(2)),
-    "RU": (1 / math.sqrt(2), -1 / math.sqrt(2)),
-    "LD": (-1 / math.sqrt(2), 1 / math.sqrt(2)),
-    "RD": (1 / math.sqrt(2), 1 / math.sqrt(2))
-}
 ENEMY_SPAWN_RATES = {
     0: 3,
     10: 5,
@@ -67,18 +52,11 @@ ENEMY_SPAWN_RATES = {
     10000: 150
 }
 
-AMMO_COLOURS = {
-    0: (255, 0, 0),
-    999: (0, 255, 0)
-}
-
-KEY_STROKES = {
-    pygame.K_LEFT: "L",
-    pygame.K_RIGHT: "R",
-    pygame.K_UP: "U",
-    pygame.K_DOWN: "D"
-}
-
+# Speed and movement constants
+PLAYER_SPEED = 6
+ENEMY_SPEED = 3
+BULLET_SPEED = 15
+DIRECTIONS = ["L", "R", "U", "D", "LU", "RU", "LD", "RD"]
 OPPOSITE_DIRECTIONS = {
     "L": ["R", "RU", "RD"],
     "R": ["L", "LU", "LD"],
@@ -89,3 +67,26 @@ OPPOSITE_DIRECTIONS = {
     "RU": ["LD"],
     "RD": ["LU"]
 }
+MOVEMENT_COEFFICIENTS = {
+    "L": (-1, 0),
+    "R": (1, 0),
+    "U": (0, -1),
+    "D": (0, 1),
+    "LU": (-1 / math.sqrt(2), -1 / math.sqrt(2)),
+    "RU": (1 / math.sqrt(2), -1 / math.sqrt(2)),
+    "LD": (-1 / math.sqrt(2), 1 / math.sqrt(2)),
+    "RD": (1 / math.sqrt(2), 1 / math.sqrt(2))
+}
+
+# Shooting constants
+AMMO_COLOURS = {
+    0: (255, 0, 0),
+    999: (0, 255, 0)
+}
+SHOOTING_OFFSETS = {
+    "RU": (21, 24),
+    "LU": (24, 24),
+    "LD": (24, 21),
+    "RD": (21, 21)
+}
+SHOOTING_COOLDOWN = 300
