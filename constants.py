@@ -54,9 +54,9 @@ ENEMY_SPAWN_RATES = {
 }
 
 # Speed and movement constants
-PLAYER_SPEED = 6
-ENEMY_SPEED = 3
-BULLET_SPEED = 15
+PLAYER_SPEED = 5
+ENEMY_SPEED = 2
+BULLET_SPEED = 10
 DIRECTIONS = ["L", "R", "U", "D", "LU", "RU", "LD", "RD"]
 OPPOSITE_DIRECTIONS = {
     "L": ["R", "RU", "RD"],
@@ -91,4 +91,3 @@ SHOOTING_OFFSETS = {
     "RD": (21, 21)
 }
 SHOOTING_COOLDOWN = 300
-
