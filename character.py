@@ -10,15 +10,15 @@ class Character(ABC):
     """Abstract base class for user and enemy characters.
 
     Attributes:
-        - image (pygame.Surface): Visual representation of character.
         - x (float): The x-coordinate of the character.
         - y (float): The y-coordinate of the character.
+        - image (pygame.Surface): Visual representation of character.
         - rect (pygame.Rect): The rectangular area that defines the position
           and size of the character.
     """
-    image: pygame.Surface
     x: float
     y: float
+    image: pygame.Surface
     rect: pygame.Rect
 
     def __init__(self, x: float, y: float, image: str) -> None:
@@ -26,9 +26,9 @@ class Character(ABC):
 
         This is an abstract class and should not be instantiated directly.
         """
-        self.image = pygame.image.load(image)
         self.x = x
         self.y = y
+        self.image = pygame.image.load(image)
         self.rect = self.image.get_rect(center=(int(x), int(y)))
 
     def draw(self, screen: pygame.Surface) -> None:
@@ -314,3 +314,4 @@ class Bullet:
                 enemies.remove(enemy)
                 kills += 1
         return kills
+
