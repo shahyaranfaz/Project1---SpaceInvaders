@@ -10,7 +10,7 @@ def handle_events(buttons: list[Button], player: UserPlayer = None,
     """"""
     mouse_pos = pygame.mouse.get_pos()
     for button in buttons:
-        button.change_color(mouse_pos)
+        button.change_colour(mouse_pos)
         button.draw(screen)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -201,3 +201,4 @@ if __name__ == "__main__":
         main_menu
     )
     main_menu()
+
