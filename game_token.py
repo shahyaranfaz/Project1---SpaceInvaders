@@ -7,13 +7,21 @@ if TYPE_CHECKING:
     from character import UserPlayer, Enemy
 
 class Token(ABC):
-    """Tokens which influence game mechanics and spawn on the map.
+    """Abstract base class for Tokens which influence game mechanics and spawn
+     on the map.
 
-    This is an abstract class and should not be instantiated.
+    Attributes:
+        - x (float): The x-coordinate of the token.
+        - y (float): The y-coordinate of the token.
+        - image (pygame.Surface): Visual representation of token.
+        - rect (pygame.Rect): Rect for positioning and collision detection.
     """
+    x: float
+    y: float
+    image: pygame.Surface
+    rect: pygame.Rect
     def __init__(self, location: tuple[float, float], image: str) -> None:
-        """Initialize a new Token at x, y coordinates contained in
-        <location>.
+        """Initialize a new Token with a visual of <image< at <location>.
 
         This is an abstract class and should not be instantiated.
         """
@@ -30,15 +38,14 @@ class Token(ABC):
 
     @abstractmethod
     def collect(self, player: UserPlayer, tokens: list[Token]) -> None:
+        """Define how the token affects <player> when collected."""
         raise NotImplementedError
 
 
 class ScoreToken(Token):
-    """Tokens which increase UserPlayer's score when collected."""
+    """Token that increases the player's score when collected."""
     def __init__(self, location: tuple[float, float]) -> None:
-        """Initialize a new AmmoToken at x, y coordinates contained in
-        <location>.
-        """
+        """Initialize a new ScoreToken at <location>."""
         super().__init__(location, "assets/token_icons/score_icon.png")
 
     def collect(self, player: UserPlayer, tokens: list[Token]) -> None:
@@ -53,9 +60,7 @@ class ScoreToken(Token):
 class AmmoToken(Token):
     """Tokens which increase UserPlayer's ammo when collected."""
     def __init__(self, location: tuple[float, float]) -> None:
-        """Initialize a new AmmoToken at x, y coordinates contained in
-        <location>.
-        """
+        """Initialize a new AmmoToken at <location>."""
         super().__init__(location, "assets/token_icons/ammo_icon.png")
 
     def collect(self, player: UserPlayer, tokens: list[Token]) -> None:
@@ -68,13 +73,14 @@ class AmmoToken(Token):
 
 
 class PowerUpToken(Token, ABC):
-    """Tokens for power-ups lasting 30 seconds.
+    """Abstract class for power-ups lasting 30 seconds.
 
-    This is an abstract class and should not be instantiated.
+    Attributes:
+        - start_time (float): The time the power-up was started.
     """
+    start_time: float
     def __init__(self, location: tuple[float, float]) -> None:
-        """Initialize a new PowerUpToken at x, y coordinates contained in
-        <location>. start_time is set to None until UserPlayer collects <self>.
+        """Initialize a new PowerUpToken at <location>.
 
         This is an abstract class and should not be instantiated.
         """
